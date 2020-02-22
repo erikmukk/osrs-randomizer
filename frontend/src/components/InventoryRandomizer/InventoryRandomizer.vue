@@ -1,11 +1,18 @@
 <template>
-    <div class="ui segment center aligned stackable grid no-margin">
+    <div class="ui segment center aligned stackable grid no-margin custom-padding">
         <div class="sixteen wide column no-margin">
-            <h3>Step 2. Get a monster to fight</h3>
+            <h3>Step 3. Get an inventory setup</h3>
         </div>
-        <div class="monster-randomizer four wide column">
-            <MonsterItem v-if="currentMonster" :item="currentMonster" />
+        <div class="inventory-randomizer four wide column">
             <div>
+                <!--<template v-for="(item, index) in currentInv">
+                    <img :key="index"
+                        class='svg-item' 
+                        :src="`data:image/jpeg;base64,${item.base64_icon}`" 
+                        alt="Equipment icon"
+                    >
+                </template>-->
+                <Inventory :items="currentInv" />  
                 <button class="ui secondary button" @click.prevent=randomize>
                     Randomize
                 </button>
@@ -21,44 +28,43 @@
                 </div>
             </div>  
         </div>
-        <div class="monster-randomizer-extras eight wide column">
-            <MonsterRandomizerConstraints @constraintsChanged="handleConstraintsChanged"/>
+        <div class="inventory-randomizer-extras eight wide column">
+            <InventoryRandomizerConstraints @constraintsChanged="handleConstraintsChanged"/>
         </div>    
     </div>
 </template>
 
 <script>
-import MonsterItem from '@/components/MonsterRandomizer/MonsterItem.vue';
-import MonsterRandomizerConstraints from './MonsterRandomizerConstraints'
-
+import Inventory from './Inventory';
+import InventoryRandomizerConstraints from './InventoryRandomizerConstraints'
 export default {
-    name: 'MonsterRandomizer',
+    name: 'InventoryRandomizer',
     components: {
-        MonsterItem,
-        MonsterRandomizerConstraints
+        Inventory,
+        InventoryRandomizerConstraints
     },
     data () {
         return {
-            currentMonster: null,
+            currentInv: [],
             randomizerLoading: false,
             loadingText: '',
-            monsterContstraints: ''
+            inventoryConstraints: ''
         }
     },
     methods: {
-        resetCurrentMonster () {
-            this.currentMonster = null;
+        resetCurrentInv () {
+            this.currentMonster = [];
             this.randomizerLoading = true;
-            this.loadingText = 'Fetching a new monster for you';
+            this.loadingText = 'Fetching new inventory for you';
         },
         randomize () {
-            this.resetCurrentMonster();
-            fetch(`http://localhost:5000/one_monster?${this.makeQueryString()}`)
+            this.resetCurrentInv();
+            fetch(`http://localhost:5000/full_inventory?${this.makeQueryString()}`)
             .then(resp => {
                 return resp.json();
             })
             .then(resp => {
-                this.currentMonster = resp;
+                this.currentInv = resp;
             })
             .catch(err => {
                 console.log(err)
@@ -68,13 +74,13 @@ export default {
             })
         },
         handleConstraintsChanged (form) {
-            this.monsterContstraints = form
+            this.inventoryConstraints = form;
         },
         makeQueryString () {
-            if (this.monsterContstraints !== '') {
+            if (this.inventoryConstraints !== '') {
                 let qString = '&'
-                Object.keys(this.monsterContstraints).map((key, index) => {
-                qString += `${key}=${this.monsterContstraints[key]}&`
+                Object.keys(this.inventoryConstraints).map((key, index) => {
+                qString += `${key}=${this.inventoryConstraints[key]}&`
                 })
                 return qString;
             }
@@ -95,12 +101,12 @@ export default {
   padding: 0.1rem;
   background: #f6f6f4;
 }
-.monster-randomizer {
+.inventory-randomizer {
   text-align: center;
-  min-height: 210px;
-  min-width: 240px;
+  min-height: 191px;
+  min-width: 240px
 }
-.monster-randomizer-extras {
+.inventory-randomizer-extras {
   text-align: center;
 }
 .ui.loader {

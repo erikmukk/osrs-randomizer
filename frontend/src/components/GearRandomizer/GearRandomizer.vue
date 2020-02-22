@@ -1,5 +1,8 @@
 <template>
-  <div class="ui segment center aligned grid">
+  <div class="ui segment center aligned stackable grid no-margin custom-padding">
+    <div class="sixteen wide column no-margin">
+      <h3>Step 1. Get a gear setup</h3>
+    </div>
     <div class="gear-randomizer four wide column">
       <strong>Your gear setup</strong>
       <br/>
@@ -18,7 +21,7 @@
         <EquipmentSlot class="gear-slot" id="weapon" :image="weapon_img" :svg="weapon_svg" :item="weapon_item" @reroll=reroll />
       </div>
       <div>
-      <button class="ui primary button randomize-button" @click.prevent=randomize>Randomize</button>
+      <button class="ui secondary button randomize-button" @click.prevent=randomize>Randomize</button>
       </div>
       <div v-if="randomizerLoading" class="loader-div">
         <div class="ui active inverted dimmer">
@@ -31,28 +34,21 @@
         </div>
       </div>  
     </div>
-    <div class="gear-randomizer-extras six wide column"> 
-      <div class="ui grid">
-        <div class="eight wide column">
-          <GearRandomizerExtras @lvlChanged="handleLvLChanged" />
-        </div> 
-        <div class="eight wide column">
-          Place for additional params
-        </div> 
-      </div>
+    <div class="gear-randomizer-extras eight wide column"> 
+      <GearRandomizerCombatConstraints @constraintsChanged="handleConstraintsChanged" />
     </div>
   </div>
 </template>
 
 <script>
 import EquipmentSlot from '@/components/GearRandomizer/EquipmentSlot.vue';
-import GearRandomizerExtras from '@/components/GearRandomizer/GearRandomizerExtras.vue'
+import GearRandomizerCombatConstraints from '@/components/GearRandomizer/GearRandomizerCombatConstraints.vue'
 
 export default {
   name: 'GearRandomizer',
   components: {
     EquipmentSlot,
-    GearRandomizerExtras
+    GearRandomizerCombatConstraints
   },
   data () {
     return {
@@ -96,7 +92,7 @@ export default {
     }
   },
   methods: {
-    handleLvLChanged (form) {
+    handleConstraintsChanged (form) {
       this.gearConstraints = form;
     },
     setItem (equipmentItem) {
@@ -176,7 +172,7 @@ export default {
       })
       .then(resp => {
         resp.forEach(item => {
-          const equipmentItem = item[0];
+          const equipmentItem = item;
           this.setItem(equipmentItem);
         })
       })
@@ -226,6 +222,16 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.column {
+  margin-bottom: 10px
+}
+.no-margin {
+  margin: 0 !important;
+}
+.custom-padding {
+  padding: 0.1rem;
+  background: #f6f6f4;
+}
 .randomize-button {
   margin-top: 10px;
 }
@@ -234,65 +240,65 @@ export default {
   max-width: 100%;
 }
 .gear-randomizer {
-  border: 1px solid black;
   text-align: center;
+  min-width: 240px
 }
 .gear-randomizer-extras {
-  border: 1px solid black;
   text-align: center;
 }
 .gear-model {
   position: relative;
   display: inline-block;
-  background: url('https://i.imgur.com/JgjetaQ.png') no-repeat;
-  height: 194px;
-  width: 148px;
+  background: url('https://i.imgur.com/rVhXMsp.png') no-repeat;
+  height: 271px;
+  width: 198px;
 }
 .gear-slot {
   position: absolute;
   cursor: pointer;
 }
 #ammo {
-  top: 39px;
-  left: 97px;
+  top: 77.5px;
+  left: 124px;
 }
 #body {
-  top: 78px;
-  left: 56px;
+  top: 116.5px;
+  left: 83px;
 }
 #cape {
-  top: 39px;
-  left: 15px;
+  top: 77.5px;
+  left: 42px;
 }
 #feet {
-  top: 158px;
-  left: 56px;
+  top: 196.5px;
+  left: 83px;
 }
 #hands {
-  top: 158px;
-  left: 0px;
+  top: 196.5px;
+  left: 25px;
 }
 #head {
-  left: 56px;
+  left: 83px;
+  top: 38.5px;
 }
 #legs {
-  top: 118px;
-  left: 56px;
+  top: 156.5px;
+  left: 81px;
 }
 #neck {
-  top: 39px;
-  left: 56px;
+  top: 77.5px;
+  left: 83px;
 }
 #ring {
-  top: 158px;
-  left: 112px;
+  top: 196.5px;
+  left: 138px;
 }
 #shield {
-  top: 78px;
-  left: 112px;
+  top: 116.5px;
+  left: 138px;
 }
 #weapon {
-  top: 78px;
-  left: 0px;
+  top: 116.5px;
+  left: 25px;
 }
 </style>

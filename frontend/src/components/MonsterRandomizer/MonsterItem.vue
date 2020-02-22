@@ -12,18 +12,17 @@
 export default {
     name: 'MonsterItem',
     props: {
-        item: Array
+        item: Object
     },
     computed: {
         monsterName () {
-            return this.item[0].Name;
+            return this.item.Name;
         },
         monsterImage () {
-            return this.item[0].wiki_image_url;
+            return this.item.wiki_image_url;
         },
         monsterWikiUrl () {
-            console.log(this.item[0].wiki_url)
-            return this.item[0].wiki_url
+            return this.item.wiki_url
         }
     }
 }

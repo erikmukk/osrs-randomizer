@@ -1,7 +1,14 @@
 <template>
-  <div class="home">
-    <GearRandomizer />
-    <MonsterRandomizer />
+  <div class="home ui stackable grid container">
+    <div class="sixteen wide column custom-padding">
+      <GearRandomizer />
+    </div>
+    <div class="sixteen wide column custom-padding">
+      <MonsterRandomizer />
+    </div>
+    <div class="sixteen wide column custom-padding">
+      <InventoryRandomizer />
+    </div>
   </div>
 </template>
 
@@ -9,17 +16,20 @@
 // @ is an alias to /src
 import GearRandomizer from '@/components/GearRandomizer/GearRandomizer.vue';
 import MonsterRandomizer from '@/components/MonsterRandomizer/MonsterRandomizer.vue';
+import InventoryRandomizer from '@/components/InventoryRandomizer/InventoryRandomizer.vue';
 
 export default {
   name: 'Home',
   components: {
     GearRandomizer,
-    MonsterRandomizer
+    MonsterRandomizer,
+    InventoryRandomizer
   },
 };
 </script>
 <style scoped>
-.home {
-  background-color: #e0e3dc !important;
+.custom-padding {
+  padding: 0.1rem;
+  margin: 0;
 }
 </style>

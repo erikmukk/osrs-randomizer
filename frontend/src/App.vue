@@ -13,7 +13,7 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  background-color: #e0e3dc !important;
+  background-color: rgb(221, 215, 212) !important;
   min-height: 100vh;
 }
 

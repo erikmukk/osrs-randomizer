@@ -9,6 +9,10 @@ api = Blueprint('api', __name__)
 
 database = OSRSBoxDatabase()
 
+@api.route("/", methods = ["GET"])
+def hello():
+    return "<h1>Hello</h1>"
+
 @api.route("/one_in_slot", methods = ["GET"])
 def one_in_slot():
     slot = request.args.get('slot')

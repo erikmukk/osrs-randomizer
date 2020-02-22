@@ -61,7 +61,6 @@ export default {
                 this.currentMonster = resp;
             })
             .catch(err => {
-                console.log(err)
             })
             .then(() => {
                 this.randomizerLoading = false;

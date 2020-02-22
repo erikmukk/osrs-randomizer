@@ -156,7 +156,6 @@ export default {
         this.setItem(equipmentItem);
       })
       .catch(err => {
-        console.log(err)
       })
       .then(() => {
         this.randomizerLoading = false
@@ -177,7 +176,6 @@ export default {
         })
       })
       .catch(err => {
-        console.log(err);
       })
       .then(() => {
        this.randomizerLoading = false;

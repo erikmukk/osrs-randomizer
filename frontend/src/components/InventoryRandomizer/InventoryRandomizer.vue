@@ -67,7 +67,6 @@ export default {
                 this.currentInv = resp;
             })
             .catch(err => {
-                console.log(err)
             })
             .then(() => {
                 this.randomizerLoading = false;

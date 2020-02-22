@@ -59,7 +59,8 @@ export default {
         },
         randomize () {
             this.resetCurrentInv();
-            fetch(`http://localhost:5000/full_inventory?${this.makeQueryString()}`)
+            console.log(process.env, process.env.VUE_APP_API_URL)
+            fetch(`${process.env.API_URL}/full_inventory?${this.makeQueryString()}`)
             .then(resp => {
                 return resp.json();
             })

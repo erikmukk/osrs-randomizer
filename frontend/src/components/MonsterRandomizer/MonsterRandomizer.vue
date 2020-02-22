@@ -53,7 +53,7 @@ export default {
         },
         randomize () {
             this.resetCurrentMonster();
-            fetch(`http://localhost:5000/one_monster?${this.makeQueryString()}`)
+            fetch(`${process.env.VUE_APP_API_URL}?${this.makeQueryString()}`)
             .then(resp => {
                 return resp.json();
             })

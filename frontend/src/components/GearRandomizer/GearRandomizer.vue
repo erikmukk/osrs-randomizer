@@ -147,7 +147,7 @@ export default {
     reroll (slot) {
       this.loadingText = `Looking for a new item for '${slot}' slot`
       this.randomizerLoading = true
-      fetch(`http://localhost:5000/one_in_slot?slot=${slot}${this.makeQueryString()}`)
+      fetch(`${process.env.VUE_APP_API_URL}/one_in_slot?slot=${slot}${this.makeQueryString()}`)
       .then(resp => {
         return resp.json();
       })
@@ -165,7 +165,7 @@ export default {
       this.resetSvg();
       this.loadingText = 'Randomizing your gear setup'
       this.randomizerLoading = true;
-      fetch(`http://localhost:5000/full_gear?${this.makeQueryString()}`)
+      fetch(`${process.env.VUE_APP_API_URL}/full_gear?${this.makeQueryString()}`)
       .then(resp => {
         return resp.json();
       })

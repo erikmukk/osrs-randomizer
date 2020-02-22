@@ -1,2 +1,3 @@
 venv/
-database_helpers/__pycache__
+api/database_helpers/__pycache__
+api/__pycache__

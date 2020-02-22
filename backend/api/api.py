@@ -1,16 +1,15 @@
-from flask import Flask, jsonify, request
+from flask import jsonify, request, Blueprint
 from random import sample
 import random
-from flask_cors import CORS
-from database_helpers import database_helpers
+from api.database_helpers import OSRSBoxDatabase
 
 # price api http://services.runescape.com/m=itemdb_oldschool/api/catalogue/detail.json?item=4151
 
-app = Flask(__name__)
-cors = CORS(app)
-database = database_helpers.OSRSBoxDatabase()  
+api = Blueprint('api', __name__)
 
-@app.route("/one_in_slot", methods = ["GET"])
+database = OSRSBoxDatabase()
+
+@api.route("/one_in_slot", methods = ["GET"])
 def one_in_slot():
     slot = request.args.get('slot')
     att_lvl = request.args.get('att') or 99
@@ -23,7 +22,7 @@ def one_in_slot():
         allow_untradeables = True
     return jsonify(database.get_one_in_slot(slot=slot, att_lvl=int(att_lvl), def_lvl=int(def_lvl), str_lvl=int(str_lvl), ranged_lvl=int(ranged_lvl), magic_lvl=int(magic_lvl), allow_untradeables=allow_untradeables))
 
-@app.route("/full_gear", methods = ["GET"])
+@api.route("/full_gear", methods = ["GET"])
 def full_gear():
     att_lvl = request.args.get('att') or 99
     def_lvl = request.args.get('def') or 99
@@ -35,7 +34,7 @@ def full_gear():
         allow_untradeables = True 
     return jsonify(database.get_full_gear(att_lvl=int(att_lvl), def_lvl=int(def_lvl), str_lvl=int(str_lvl), ranged_lvl=int(ranged_lvl), magic_lvl=int(magic_lvl), allow_untradeables=allow_untradeables))
 
-@app.route("/one_monster", methods = ["GET"])
+@api.route("/one_monster", methods = ["GET"])
 def random_monsters():
     bosses_only = False
     if (request.args.get('onlyBosses')  == 'true'):
@@ -44,13 +43,10 @@ def random_monsters():
     
     return jsonify(monster)
 
-@app.route("/full_inventory", methods = ["GET"])
+@api.route("/full_inventory", methods = ["GET"])
 def full_inventory():
     nr_of_pots = int(request.args.get('nrOfPots'))
     nr_of_food = int(request.args.get('nrOfFood'))
     inv = database.get_full_inventory(nr_of_pots, nr_of_food)
     return jsonify(inv)    
 
-if __name__ == '__main__':
-    app.debug = True
-    app.run()  

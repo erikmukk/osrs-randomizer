@@ -1,3 +1,5 @@
 venv/
 api/database_helpers/__pycache__
 api/__pycache__
+__pycache__
+randomizer.ini

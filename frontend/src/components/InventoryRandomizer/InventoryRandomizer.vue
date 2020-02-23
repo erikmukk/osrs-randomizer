@@ -59,7 +59,7 @@ export default {
         },
         randomize () {
             this.resetCurrentInv();
-            fetch(`${process.env.API_URL}/full_inventory?${this.makeQueryString()}`)
+            fetch(`${process.env.VUE_APP_API_URL}/full_inventory?${this.makeQueryString()}`)
             .then(resp => {
                 return resp.json();
             })
@@ -77,7 +77,7 @@ export default {
         },
         makeQueryString () {
             if (this.inventoryConstraints !== '') {
-                let qString = '&'
+                let qString = ''
                 Object.keys(this.inventoryConstraints).map((key, index) => {
                 qString += `${key}=${this.inventoryConstraints[key]}&`
                 })

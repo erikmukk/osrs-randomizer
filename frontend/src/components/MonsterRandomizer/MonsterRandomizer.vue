@@ -53,7 +53,7 @@ export default {
         },
         randomize () {
             this.resetCurrentMonster();
-            fetch(`${process.env.VUE_APP_API_URL}?${this.makeQueryString()}`)
+            fetch(`${process.env.VUE_APP_API_URL}/one_monster?${this.makeQueryString()}`)
             .then(resp => {
                 return resp.json();
             })
@@ -71,7 +71,7 @@ export default {
         },
         makeQueryString () {
             if (this.monsterContstraints !== '') {
-                let qString = '&'
+                let qString = ''
                 Object.keys(this.monsterContstraints).map((key, index) => {
                 qString += `${key}=${this.monsterContstraints[key]}&`
                 })

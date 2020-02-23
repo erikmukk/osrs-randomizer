@@ -1,2 +1,3 @@
-from api.application import create_app
-app = create_app()
+from appserver import app
+if __name__ == "__main__":
+    app.run()

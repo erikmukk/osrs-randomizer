@@ -1,5 +1,5 @@
 <template>
-  <div class="home ui stackable grid container">
+  <div class="home ui stackable grid">
     <div class="sixteen wide column custom-padding">
       <GearRandomizer />
     </div>

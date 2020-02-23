@@ -1,5 +1,19 @@
 <template>
   <div class="about">
-    <h1>Gib me free GP!!!</h1>
+    <AboutPage />
   </div>
 </template>
+
+<script>
+import AboutPage from '@/components/About/AboutPage';
+export default {
+  name: 'About',
+  components: {
+    AboutPage
+  }
+}
+</script>
+
+<style scoped lang="scss">
+
+</style>

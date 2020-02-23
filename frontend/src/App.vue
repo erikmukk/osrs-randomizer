@@ -4,7 +4,13 @@
       <router-link to="/">Home</router-link> |
       <router-link to="/about">About</router-link>
     </div>-->
-    <router-view/>
+    <div class="ui container">
+      <div class="ui menu">
+        <router-link class="item" to="/">OSRS Randomizer</router-link>
+        <router-link class="item" to="/about">About</router-link> 
+      </div>
+      <router-view/>
+    </div>
   </div>
 </template>
 

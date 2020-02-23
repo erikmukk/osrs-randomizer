@@ -359,7 +359,8 @@ class OSRSBoxDatabase:
                 new_regex = re.compile(f".*{elem}.*|.*{elem.lower}.*")     
                 if (new_regex.search(monster.wiki_name) 
                 and "Hellhound" not in monster.wiki_name 
-                and "Scorpia's" not in monster.wiki_name):
+                and "Scorpia's" not in monster.wiki_name
+                and "Spawn" not in monster.wiki_name):
                     if len(all_bosses) == 0:
                         all_bosses.append(monster)
                         break

@@ -61,13 +61,27 @@
         </div>    
         <div class="eight wide column">
             <form class="ui form ">
-                <div class="ui checkbox">
+                <div class="field">
+                    <div class="ui checkbox">
+                        <input 
+                        v-model="form.untradeables" 
+                        type="checkbox" 
+                        name="untradeables" 
+                        >
+                        <label>Allow untradeables?</label>
+                    </div>
+                </div>  
+                <div class="field disabled">
+                    <label>Max slot price (10 000+)</label>
+                    <label>Temporarily disabled</label>
                     <input 
-                    v-model="form.untradeables" 
-                    type="checkbox" 
-                    name="untradeables" 
+                    v-model="form.maxPrice" 
+                    type="number" 
+                    name="maxPrice" 
+                    placeholder="Price"
+                    @input="checkPrice('maxPrice', $event)"
+                    @blur="checkValueOnBlur('maxPrice', $event)"
                     >
-                    <label>Allow untradeables?</label>
                 </div>
             </form>   
         </div>   
@@ -85,7 +99,8 @@ export default {
                 def: 99,
                 magic: 99,
                 ranged: 99,
-                untradeables: true
+                untradeables: true,
+                maxPrice: 100000
             }
         }
     },
@@ -94,6 +109,13 @@ export default {
             const value = e.target.valueAsNumber
             if (value > 99) {
                 this.form[lvl] = 99
+            }
+            this.$emit('constraintsChanged', this.form)
+        },
+        checkPrice (price, e) {
+            const value = e.target.valueAsNumber
+            if (value < 10000) {
+                this.form[price] = 10000
             }
             this.$emit('constraintsChanged', this.form)
         },

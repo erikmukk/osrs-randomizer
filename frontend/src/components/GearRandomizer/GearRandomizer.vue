@@ -1,5 +1,5 @@
 <template>
-  <div class="ui segment center aligned stackable grid no-margin custom-padding">
+  <div class="ui segment center aligned stackable grid custom">
     <div class="sixteen wide column no-margin">
       <h3>Step 1. Get a gear setup</h3>
     </div>
@@ -23,7 +23,7 @@
       <div>
       <button class="ui secondary button randomize-button" @click.prevent=randomize>Randomize</button>
       </div>
-      <div v-if="randomizerLoading" class="loader-div">
+      <div v-if="isLoading" class="loader-div">
         <div class="ui active inverted dimmer">
           <div class="ui loader">
             <br/>
@@ -43,6 +43,7 @@
 <script>
 import EquipmentSlot from '@/components/GearRandomizer/EquipmentSlot.vue';
 import GearRandomizerCombatConstraints from '@/components/GearRandomizer/GearRandomizerCombatConstraints.vue'
+import {mapGetters} from 'vuex';
 
 export default {
   name: 'GearRandomizer',
@@ -86,14 +87,29 @@ export default {
       ring_item: null,
       shield_item: null,
       weapon_item:null,
-      randomizerLoading: false,
       loadingText: '',
       gearConstraints: ''
+    }
+  },
+  computed: {
+    ...mapGetters({
+      allItems: 'gear/allItems',
+      isLoading: 'gear/isLoading',
+    })
+  },
+  watch: {
+    allItems (newVal, oldVal) {
+      this.setItems();
     }
   },
   methods: {
     handleConstraintsChanged (form) {
       this.gearConstraints = form;
+    },
+    setItems () {
+      this.allItems.forEach(item => {
+        this.setItem(item)
+      })
     },
     setItem (equipmentItem) {
       switch (equipmentItem.slot) {
@@ -146,74 +162,11 @@ export default {
     },
     reroll (slot) {
       this.loadingText = `Looking for a new item for '${slot}' slot`
-      this.randomizerLoading = true
-      fetch(`${process.env.VUE_APP_API_URL}/one_in_slot?slot=${slot}${this.makeQueryString()}`)
-      .then(resp => {
-        return resp.json();
-      })
-      .then(resp => {
-        const equipmentItem = resp[0];
-        this.setItem(equipmentItem);
-      })
-      .catch(err => {
-      })
-      .then(() => {
-        this.randomizerLoading = false
-      })
+      this.$store.dispatch('gear/getOneEquipmentInSlot', {slot, queryParams: this.gearConstraints});
     },
     randomize () {
-      this.resetSvg();
       this.loadingText = 'Randomizing your gear setup'
-      this.randomizerLoading = true;
-      fetch(`${process.env.VUE_APP_API_URL}/full_gear?${this.makeQueryString()}`)
-      .then(resp => {
-        return resp.json();
-      })
-      .then(resp => {
-        resp.forEach(item => {
-          const equipmentItem = item;
-          this.setItem(equipmentItem);
-        })
-      })
-      .catch(err => {
-      })
-      .then(() => {
-       this.randomizerLoading = false;
-      })
-    },
-    resetSvg () {
-      this.ammo_svg = '';
-      this.body_svg = '';
-      this.cape_svg = '';
-      this.feet_svg = '';
-      this.hands_svg = '';
-      this.head_svg = '';
-      this.legs_svg = '';
-      this.neck_svg = '';
-      this.ring_svg = '';
-      this.shield_svg = '';
-      this.weapon_svg ='';
-      this.ammo_item = null;
-      this.body_item = null;
-      this.cape_item = null;
-      this.feet_item = null;
-      this.hands_item = null;
-      this.head_item = null;
-      this.legs_item = null;
-      this.neck_item = null;
-      this.ring_item = null;
-      this.shield_item = null;
-      this.weapon_item =null;
-    },
-    makeQueryString () {
-      if (this.gearConstraints !== '') {
-        let qString = '&'
-        Object.keys(this.gearConstraints).map((key, index) => {
-          qString += `${key}=${this.gearConstraints[key]}&`
-        })
-        return qString;
-      }
-      return ''
+      this.$store.dispatch('gear/getFullEquipment', this.gearConstraints)
     }
   },
 };
@@ -223,12 +176,9 @@ export default {
 .column {
   margin-bottom: 10px
 }
-.no-margin {
-  margin: 0 !important;
-}
-.custom-padding {
-  padding: 0.1rem;
+.custom {
   background: #f6f6f4;
+  margin-bottom: 0;
 }
 .randomize-button {
   margin-top: 10px;

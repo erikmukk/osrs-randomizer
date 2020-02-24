@@ -5,14 +5,20 @@
       <router-link to="/about">About</router-link>
     </div>-->
     <div class="ui container">
-      <div class="ui menu">
-        <router-link class="item" to="/">OSRS Randomizer</router-link>
-        <router-link class="item" to="/about">About</router-link> 
-      </div>
+      <Navbar />
       <router-view/>
     </div>
   </div>
 </template>
+
+<script>
+import Navbar from '@/components/Navbar/Navbar';
+export default {
+  components: {
+    Navbar
+  }
+}
+</script>
 
 <style>
 #app {

@@ -1,16 +1,16 @@
 <template>
-    <div class="ui segment center aligned stackable grid no-margin">
+    <div class="ui segment center aligned stackable grid custom">
         <div class="sixteen wide column no-margin">
             <h3>Step 2. Get a monster to fight</h3>
         </div>
         <div class="monster-randomizer four wide column">
-            <MonsterItem v-if="currentMonster" :item="currentMonster" />
+            <MonsterItem v-if="oneMonster" :item="oneMonster" />
             <div>
                 <button class="ui secondary button" @click.prevent=randomize>
                     Randomize
                 </button>
             </div>
-            <div v-if="randomizerLoading" class="loader-div">
+            <div v-if="isLoading" class="loader-div">
                 <div class="ui active inverted dimmer">
                     <div class="ui loader">
                         <br/>
@@ -29,7 +29,8 @@
 
 <script>
 import MonsterItem from '@/components/MonsterRandomizer/MonsterItem.vue';
-import MonsterRandomizerConstraints from './MonsterRandomizerConstraints'
+import MonsterRandomizerConstraints from './MonsterRandomizerConstraints';
+import {mapGetters} from 'vuex';
 
 export default {
     name: 'MonsterRandomizer',
@@ -39,45 +40,23 @@ export default {
     },
     data () {
         return {
-            currentMonster: null,
-            randomizerLoading: false,
             loadingText: '',
             monsterContstraints: ''
         }
     },
+    computed: {
+        ...mapGetters({
+            oneMonster: 'monster/oneMonster',
+            isLoading: 'monster/isLoading'
+        })
+    },
     methods: {
-        resetCurrentMonster () {
-            this.currentMonster = null;
-            this.randomizerLoading = true;
-            this.loadingText = 'Fetching a new monster for you';
-        },
         randomize () {
-            this.resetCurrentMonster();
-            fetch(`${process.env.VUE_APP_API_URL}/one_monster?${this.makeQueryString()}`)
-            .then(resp => {
-                return resp.json();
-            })
-            .then(resp => {
-                this.currentMonster = resp;
-            })
-            .catch(err => {
-            })
-            .then(() => {
-                this.randomizerLoading = false;
-            })
+            this.loadingText = 'Fetching a new monster for you';
+            this.$store.dispatch('monster/getOneMonster', this.monsterContstraints)
         },
         handleConstraintsChanged (form) {
             this.monsterContstraints = form
-        },
-        makeQueryString () {
-            if (this.monsterContstraints !== '') {
-                let qString = ''
-                Object.keys(this.monsterContstraints).map((key, index) => {
-                qString += `${key}=${this.monsterContstraints[key]}&`
-                })
-                return qString;
-            }
-            return ''
         }
     },
 }
@@ -87,12 +66,9 @@ export default {
 .column {
   margin-bottom: 10px
 }
-.no-margin {
-  margin: 0 !important;
-}
-.custom-padding {
-  padding: 0.1rem;
+.custom {
   background: #f6f6f4;
+  margin-bottom: 0;
 }
 .monster-randomizer {
   text-align: center;

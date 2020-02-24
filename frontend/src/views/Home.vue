@@ -1,13 +1,30 @@
 <template>
   <div class="home ui stackable grid">
-    <div class="sixteen wide column custom-padding">
-      <GearRandomizer />
-    </div>
-    <div class="sixteen wide column custom-padding">
-      <MonsterRandomizer />
-    </div>
-    <div class="sixteen wide column custom-padding">
-      <InventoryRandomizer />
+    <div v-if="!isNewVersion">
+      <div class="sixteen wide column">
+        <GearRandomizer />
+      </div>
+      <div class="sixteen wide column">
+        <MonsterRandomizer />
+      </div>
+      <div class="sixteen wide column">
+        <InventoryRandomizer />
+      </div>
+    </div>  
+    <div v-else class="sixteen wide column">
+      <carousel 
+      :perPage=1 
+      >
+        <slide>
+  	      <GearRandomizer />
+        </slide>
+        <slide>
+          <MonsterRandomizer />
+        </slide>
+        <slide>
+          <InventoryRandomizer />
+        </slide>
+      </carousel>  
     </div>
   </div>
 </template>
@@ -17,19 +34,25 @@
 import GearRandomizer from '@/components/GearRandomizer/GearRandomizer.vue';
 import MonsterRandomizer from '@/components/MonsterRandomizer/MonsterRandomizer.vue';
 import InventoryRandomizer from '@/components/InventoryRandomizer/InventoryRandomizer.vue';
+import {mapGetters} from 'vuex';
+import {Carousel, Slide} from 'vue-carousel';
 
 export default {
   name: 'Home',
   components: {
     GearRandomizer,
     MonsterRandomizer,
-    InventoryRandomizer
+    InventoryRandomizer,
+    Slide,
+    Carousel
   },
+  computed: {
+    ...mapGetters({
+      isNewVersion: 'application/isNewVersion'
+    })
+  }
 };
 </script>
 <style scoped>
-.custom-padding {
-  padding: 0.1rem;
-  margin: 0;
-}
+
 </style>

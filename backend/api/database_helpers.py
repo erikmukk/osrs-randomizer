@@ -4,6 +4,8 @@ import re
 from osrsbox import items_api, monsters_api
 from random import sample
 from bs4 import BeautifulSoup
+from flask import jsonify
+import json
 
 class OSRSBoxDatabase:
     def __init__(self):
@@ -49,7 +51,8 @@ class OSRSBoxDatabase:
                             'URL': item.wiki_url,
                             'base64_icon': item.icon,
                             'slot': item.equipment.slot,
-                            'tradeable': item.tradeable_on_ge
+                            'tradeable': item.tradeable_on_ge,
+                            'id': item.id
                         }
                         items.append(item_object)
                     elif item_slot == None:
@@ -58,12 +61,17 @@ class OSRSBoxDatabase:
                             'URL': item.wiki_url,
                             'base64_icon': item.icon,
                             'slot': item.equipment.slot,
-                            'tradeable': item.tradeable_on_ge
+                            'tradeable': item.tradeable_on_ge,
+                            'id': item.id
                         }
                         items.append(item_object)
         return items
 
-    def get_full_gear(self, att_lvl = 99, def_lvl = 99, str_lvl = 99, ranged_lvl = 99, magic_lvl = 99, allow_untradeables=True):
+    def check_item_price(self, item_id, max_price):
+
+        return "a"    
+
+    def get_full_gear(self, att_lvl = 99, def_lvl = 99, str_lvl = 99, ranged_lvl = 99, magic_lvl = 99, allow_untradeables=True, max_price = 10000):
         all_gear_slots = [
             "head", 
             "body", 
@@ -90,8 +98,9 @@ class OSRSBoxDatabase:
             # print(item['tradeable'], item['Name'])
         return items  
 
-    def get_one_in_slot(self, slot = None, att_lvl = 99, def_lvl = 99, str_lvl = 99, ranged_lvl = 99, magic_lvl = 99, allow_untradeables = True):
-        return random.sample(self.get_all_in_slot(slot, att_lvl, def_lvl, str_lvl, ranged_lvl, magic_lvl, allow_untradeables), 1)  
+    def get_one_in_slot(self, slot = None, att_lvl = 99, def_lvl = 99, str_lvl = 99, ranged_lvl = 99, magic_lvl = 99, allow_untradeables = True, max_price = 100000):
+        item = random.sample(self.get_all_in_slot(slot, att_lvl, def_lvl, str_lvl, ranged_lvl, magic_lvl, allow_untradeables), 1)
+        return item
 
     def get_random_monsters(self, bosses_only):
         monsters = []

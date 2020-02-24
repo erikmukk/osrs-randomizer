@@ -1,23 +1,16 @@
 <template>
-    <div class="ui segment center aligned stackable grid no-margin custom-padding">
+    <div class="ui segment center aligned stackable grid custom">
         <div class="sixteen wide column no-margin">
             <h3>Step 3. Get an inventory setup</h3>
         </div>
         <div class="inventory-randomizer four wide column">
             <div>
-                <!--<template v-for="(item, index) in currentInv">
-                    <img :key="index"
-                        class='svg-item' 
-                        :src="`data:image/jpeg;base64,${item.base64_icon}`" 
-                        alt="Equipment icon"
-                    >
-                </template>-->
-                <Inventory :items="currentInv" />  
+                <Inventory :items="allItems" />  
                 <button class="ui secondary button" @click.prevent=randomize>
                     Randomize
                 </button>
             </div>
-            <div v-if="randomizerLoading" class="loader-div">
+            <div v-if="isLoading" class="loader-div">
                 <div class="ui active inverted dimmer">
                     <div class="ui loader">
                         <br/>
@@ -36,7 +29,9 @@
 
 <script>
 import Inventory from './Inventory';
-import InventoryRandomizerConstraints from './InventoryRandomizerConstraints'
+import InventoryRandomizerConstraints from './InventoryRandomizerConstraints';
+import {mapGetters} from 'vuex';
+
 export default {
     name: 'InventoryRandomizer',
     components: {
@@ -45,45 +40,23 @@ export default {
     },
     data () {
         return {
-            currentInv: [],
-            randomizerLoading: false,
             loadingText: '',
             inventoryConstraints: ''
         }
     },
+    computed: {
+        ...mapGetters({
+            allItems: 'inventory/allItems',
+            isLoading: 'inventory/isLoading'
+        })
+    },
     methods: {
-        resetCurrentInv () {
-            this.currentMonster = [];
-            this.randomizerLoading = true;
-            this.loadingText = 'Fetching new inventory for you';
-        },
         randomize () {
-            this.resetCurrentInv();
-            fetch(`${process.env.VUE_APP_API_URL}/full_inventory?${this.makeQueryString()}`)
-            .then(resp => {
-                return resp.json();
-            })
-            .then(resp => {
-                this.currentInv = resp;
-            })
-            .catch(err => {
-            })
-            .then(() => {
-                this.randomizerLoading = false;
-            })
+            this.loadingText = 'Fetching new inventory for you'
+            this.$store.dispatch('inventory/getAllInventory', this.inventoryConstraints)
         },
         handleConstraintsChanged (form) {
             this.inventoryConstraints = form;
-        },
-        makeQueryString () {
-            if (this.inventoryConstraints !== '') {
-                let qString = ''
-                Object.keys(this.inventoryConstraints).map((key, index) => {
-                qString += `${key}=${this.inventoryConstraints[key]}&`
-                })
-                return qString;
-            }
-            return ''
         }
     },
 }
@@ -93,11 +66,7 @@ export default {
 .column {
   margin-bottom: 10px
 }
-.no-margin {
-  margin: 0 !important;
-}
-.custom-padding {
-  padding: 0.1rem;
+.custom {
   background: #f6f6f4;
 }
 .inventory-randomizer {

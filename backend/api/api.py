@@ -21,10 +21,19 @@ def one_in_slot():
     str_lvl = request.args.get('str') or 99
     ranged_lvl = request.args.get('ranged') or 99
     magic_lvl = request.args.get('magic') or 99
+    max_price = request.args.get('maxPrice') or 100000
     allow_untradeables = False
     if (request.args.get('untradeables')  == 'true'):
         allow_untradeables = True
-    return jsonify(database.get_one_in_slot(slot=slot, att_lvl=int(att_lvl), def_lvl=int(def_lvl), str_lvl=int(str_lvl), ranged_lvl=int(ranged_lvl), magic_lvl=int(magic_lvl), allow_untradeables=allow_untradeables))
+    return jsonify(database.get_one_in_slot(
+        slot=slot, 
+        att_lvl=int(att_lvl), 
+        def_lvl=int(def_lvl), 
+        str_lvl=int(str_lvl), 
+        ranged_lvl=int(ranged_lvl), 
+        magic_lvl=int(magic_lvl), 
+        allow_untradeables=allow_untradeables, 
+        max_price=int(max_price)))
 
 @api.route("/full_gear", methods = ["GET"])
 def full_gear():
@@ -33,10 +42,18 @@ def full_gear():
     str_lvl = request.args.get('str') or 99
     ranged_lvl = request.args.get('ranged') or 99
     magic_lvl = request.args.get('magic')  or 99
+    max_price = request.args.get('maxPrice') or 100000
     allow_untradeables = False
     if (request.args.get('untradeables')  == 'true'):
         allow_untradeables = True 
-    return jsonify(database.get_full_gear(att_lvl=int(att_lvl), def_lvl=int(def_lvl), str_lvl=int(str_lvl), ranged_lvl=int(ranged_lvl), magic_lvl=int(magic_lvl), allow_untradeables=allow_untradeables))
+    return jsonify(database.get_full_gear(
+        att_lvl=int(att_lvl), 
+        def_lvl=int(def_lvl), 
+        str_lvl=int(str_lvl), 
+        ranged_lvl=int(ranged_lvl), 
+        magic_lvl=int(magic_lvl), 
+        allow_untradeables=allow_untradeables, 
+        max_price=int(max_price)))
 
 @api.route("/one_monster", methods = ["GET"])
 def random_monsters():

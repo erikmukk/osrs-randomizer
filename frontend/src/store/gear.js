@@ -20,7 +20,6 @@ export default {
             state.items = items;
         },
         replaceOneItem (state, newItem) {
-            console.log(newItem)
             state.items = state.items.map(item => {
                 if (item.slot === newItem.slot) {
                     return newItem

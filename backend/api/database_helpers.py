@@ -165,7 +165,7 @@ class OSRSBoxDatabase:
 
     def get_random_monsters(self, monsters_pool, max_lvl):
         monsters = []
-        regex = re.compile(r'[Dd]ragon')
+        regex = re.compile(r'[Dd]ragon|Vorkath')
         for monster in monsters_pool:
             if (monster.combat_level <= max_lvl):
                 isDragonfire = False
@@ -178,7 +178,7 @@ class OSRSBoxDatabase:
                     'isPoisonous': monster.poisonous,
                     'isDragonfire': isDragonfire
                 }
-                monsters.append(_monster)   
+                monsters.append(_monster) 
         return monsters   
 
     def get_one_monster(self, bosses_only, slayer_only, max_lvl):

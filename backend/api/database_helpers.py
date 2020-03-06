@@ -18,7 +18,7 @@ class OSRSBoxDatabase:
         self.all_bosses = self.init_bosses(_all_monsters)
         self.all_slayer_monsters = self.init_slayer_monsters(_all_monsters)
 
-    def can_pick(self, item, att_lvl, def_lvl, str_lvl, ranged_lvl, magic_lvl, allow_untradeables):
+    def can_pick(self, item, att_lvl, def_lvl, str_lvl, ranged_lvl, magic_lvl, prayer_lvl, allow_untradeables):
         requirements = item.equipment.requirements
         if requirements == None:
             return True
@@ -34,16 +34,18 @@ class OSRSBoxDatabase:
                 is_suitbale_array.append(ranged_lvl >= requirements['ranged'])
             if 'magic' == key:  
                 is_suitbale_array.append(magic_lvl >= requirements['magic'])
+            if 'prayer' == key:  
+                is_suitbale_array.append(magic_lvl >= requirements['prayer'])
                     
         if False in is_suitbale_array:
             return False
         return True  
 
-    def get_all_in_slot(self, item_slot, att_lvl , def_lvl , str_lvl, ranged_lvl, magic_lvl, allow_untradeables):
+    def get_all_in_slot(self, item_slot, att_lvl , def_lvl , str_lvl, ranged_lvl, magic_lvl, prayer_lvl, allow_untradeables):
         items = []
         for item in self.all_items:
             if item.equipment:
-                if (self.can_pick(item, att_lvl, def_lvl, str_lvl, ranged_lvl, magic_lvl, allow_untradeables)):
+                if (self.can_pick(item, att_lvl, def_lvl, str_lvl, ranged_lvl, magic_lvl, prayer_lvl, allow_untradeables)):
                     if item.equipment.slot == item_slot:
                         item_object = {
                             'Name': item.wiki_name,
@@ -70,7 +72,7 @@ class OSRSBoxDatabase:
 
         return "a"    
 
-    def get_full_gear(self, att_lvl = 99, def_lvl = 99, str_lvl = 99, ranged_lvl = 99, magic_lvl = 99, allow_untradeables=True, max_price = 10000):
+    def get_full_gear(self, att_lvl = 99, def_lvl = 99, str_lvl = 99, ranged_lvl = 99, magic_lvl = 99, prayer_lvl = 99, allow_untradeables=True, max_price = 10000):
         all_gear_slots = [
             "head", 
             "body", 
@@ -88,17 +90,17 @@ class OSRSBoxDatabase:
             all_gear_slots = all_gear_slots + ['2h']  
         items = []
         for slot in all_gear_slots:
-            item = sample(self.get_all_in_slot(slot, att_lvl, def_lvl, str_lvl, ranged_lvl, magic_lvl, allow_untradeables), 1)[0]
+            item = sample(self.get_all_in_slot(slot, att_lvl, def_lvl, str_lvl, ranged_lvl, magic_lvl, prayer_lvl, allow_untradeables), 1)[0]
             # Reroll if needed
             while (not item['tradeable'] and not allow_untradeables):
                 if (not item['tradeable'] and not allow_untradeables):
-                    item = sample(self.get_all_in_slot(slot, att_lvl, def_lvl, str_lvl, ranged_lvl, magic_lvl, allow_untradeables), 1)[0]
+                    item = sample(self.get_all_in_slot(slot, att_lvl, def_lvl, str_lvl, ranged_lvl, magic_lvl, prayer_lvl, allow_untradeables), 1)[0]
             items.append(item)
             # print(item['tradeable'], item['Name'])
         return items  
 
-    def get_one_in_slot(self, slot = None, att_lvl = 99, def_lvl = 99, str_lvl = 99, ranged_lvl = 99, magic_lvl = 99, allow_untradeables = True, max_price = 100000):
-        item = random.sample(self.get_all_in_slot(slot, att_lvl, def_lvl, str_lvl, ranged_lvl, magic_lvl, allow_untradeables), 1)
+    def get_one_in_slot(self, slot = None, att_lvl = 99, def_lvl = 99, str_lvl = 99, ranged_lvl = 99, magic_lvl = 99, prayer_lvl = 99, allow_untradeables = True, max_price = 100000):
+        item = random.sample(self.get_all_in_slot(slot, att_lvl, def_lvl, str_lvl, ranged_lvl, magic_lvl, prayer_lvl, allow_untradeables), 1)
         return item
 
     def get_random_monsters(self, monsters_pool, max_lvl):
@@ -108,19 +110,23 @@ class OSRSBoxDatabase:
                 _monster = {
                     'Name': monster.name,
                     'wiki_url': monster.wiki_url,
-                    'isSlayer': monster.slayer_monster
+                    'isSlayer': monster.slayer_monster,
+                    'isPoisonous': monster.poisonous
                 }
                 monsters.append(_monster)
         return monsters   
 
     def get_one_monster(self, bosses_only, slayer_only, max_lvl):
         monster = None
-        if (bosses_only):
-            monster = sample(self.get_random_monsters(self.all_bosses, max_lvl), 1)[0]
-        elif (slayer_only):
-            monster = sample(self.get_random_monsters(self.all_slayer_monsters, max_lvl), 1)[0]
-        else:
-            monster = sample(self.get_random_monsters(self.all_monsters, max_lvl), 1)[0]
+        try:
+            if (bosses_only):
+                monster = sample(self.get_random_monsters(self.all_bosses, max_lvl), 1)[0]
+            elif (slayer_only):
+                monster = sample(self.get_random_monsters(self.all_slayer_monsters, max_lvl), 1)[0]
+            else:
+                monster = sample(self.get_random_monsters(self.all_monsters, max_lvl), 1)[0]
+        except:
+            return {}
         monster_wiki_url = monster['wiki_url']
         page = requests.get(monster_wiki_url)
         soup = BeautifulSoup(page.content, "lxml")

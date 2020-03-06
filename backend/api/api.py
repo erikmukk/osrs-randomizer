@@ -42,6 +42,7 @@ def full_gear():
     str_lvl = request.args.get('str') or 99
     ranged_lvl = request.args.get('ranged') or 99
     magic_lvl = request.args.get('magic')  or 99
+    prayer_lvl = request.args.get('prayer')  or 99
     max_price = request.args.get('maxPrice') or 100000
     allow_untradeables = False
     if (request.args.get('untradeables')  == 'true'):
@@ -52,6 +53,7 @@ def full_gear():
         str_lvl=int(str_lvl), 
         ranged_lvl=int(ranged_lvl), 
         magic_lvl=int(magic_lvl), 
+        prayer_lvl=int(prayer_lvl),
         allow_untradeables=allow_untradeables, 
         max_price=int(max_price)))
 

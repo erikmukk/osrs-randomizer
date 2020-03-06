@@ -1,91 +1,113 @@
 <template>
     <div class="combat-stats ui stackable centered grid">
-        <div class="eight wide column">
-            <form class="ui form">
+        <div class="ten wide column">
+            <h4>Combat stats restrictions</h4>
+            <form class="ui form grid">
+              <div class="eight wide column">
                 <div class="field">
-                    <label>Max attack level (1-99)</label>
-                    <input 
-                    v-model="form.att" 
-                    type="number" 
-                    name="attLevel" 
+                  <label>Attack</label>
+                  <input
+                    class="max-width-input"
+                    v-model="form.att"
+                    type="number"
+                    name="attLevel"
                     placeholder="Attack level"
                     @input="checkValue('att', $event)"
                     @blur="checkValueOnBlur('att', $event)"
-                    >
+                  >
                 </div>
                 <div class="field">
-                    <label>Max strength level (1-99)</label>
-                    <input 
-                    v-model="form.str" 
-                    type="number" 
-                    name="strLevel" 
+                  <label>Strength</label>
+                  <input
+                    class="max-width-input"
+                    v-model="form.str"
+                    type="number"
+                    name="strLevel"
                     placeholder="Strength level"
                     @input="checkValue('str', $event)"
                     @blur="checkValueOnBlur('str', $event)"
-                    >
+                  >
                 </div>
                 <div class="field">
-                    <label>Max defence level (1-99)</label>
-                    <input 
-                    v-model="form.def" 
-                    type="number" 
-                    name="defLevel" 
+                  <label>Defence</label>
+                  <input
+                    class="max-width-input"
+                    v-model="form.def"
+                    type="number"
+                    name="defLevel"
                     placeholder="Defence level"
                     @input="checkValue('def', $event)"
                     @blur="checkValueOnBlur('def', $event)"
-                    >
+                  >
                 </div>
+              </div>
+              <div class="eight wide column">
                 <div class="field">
-                    <label>Max ranged level (1-99)</label>
-                    <input 
-                    v-model="form.ranged" 
-                    type="number" 
-                    name="rangedLevel" 
+                  <label>Ranged</label>
+                  <input
+                    class="max-width-input"
+                    v-model="form.ranged"
+                    type="number"
+                    name="rangedLevel"
                     placeholder="Ranged level"
                     @input="checkValue('ranged', $event)"
                     @blur="checkValueOnBlur('ranged', $event)"
-                    >
+                  >
                 </div>
                 <div class="field">
-                    <label>Max magic level (1-99)</label>
-                    <input 
-                    v-model="form.magic" 
-                    type="number" 
-                    name="magicLevel" 
+                  <label>Magic</label>
+                  <input
+                    class="max-width-input"
+                    v-model="form.magic"
+                    type="number"
+                    name="magicLevel"
                     placeholder="Magic level"
                     @input="checkValue('magic', $event)"
                     @blur="checkValueOnBlur('magic', $event)"
-                    >
+                  >
                 </div>
+                <div class="field">
+                  <label>Prayer</label>
+                  <input
+                    class="max-width-input"
+                    v-model="form.prayer"
+                    type="number"
+                    name="prayerLevel"
+                    placeholder="Prayer level"
+                    @input="checkValue('prayer', $event)"
+                    @blur="checkValueOnBlur('prayer', $event)"
+                  >
+                </div>
+              </div>
             </form>
-        </div>    
-        <div class="eight wide column">
+        </div>
+        <div class="six wide column">
             <form class="ui form ">
                 <div class="field">
                     <div class="ui checkbox">
-                        <input 
-                        v-model="form.untradeables" 
-                        type="checkbox" 
-                        name="untradeables" 
+                        <input
+                        v-model="form.untradeables"
+                        type="checkbox"
+                        name="untradeables"
                         >
                         <label>Allow untradeables?</label>
                     </div>
-                </div>  
+                </div>
                 <div class="field disabled">
                     <label>Max slot price (10 000+)</label>
                     <label>Temporarily disabled</label>
-                    <input 
-                    v-model="form.maxPrice" 
-                    type="number" 
-                    name="maxPrice" 
+                    <input
+                    v-model="form.maxPrice"
+                    type="number"
+                    name="maxPrice"
                     placeholder="Price"
                     @input="checkPrice('maxPrice', $event)"
                     @blur="checkValueOnBlur('maxPrice', $event)"
                     >
                 </div>
-            </form>   
-        </div>   
-    </div>    
+            </form>
+        </div>
+    </div>
 </template>
 
 <script>
@@ -99,6 +121,7 @@ export default {
                 def: 99,
                 magic: 99,
                 ranged: 99,
+                prayer: 99,
                 untradeables: true,
                 maxPrice: 100000
             }
@@ -134,5 +157,13 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
+.max-width-input {
+  width: 60px;
+}
+.left-col-field {
+  text-align: right;
+  & label {
+    float: left;
+  }
+}
 </style>

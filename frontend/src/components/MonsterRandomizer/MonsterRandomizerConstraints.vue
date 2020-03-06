@@ -7,10 +7,10 @@
             <div class="grouped fields">
                 <div class="field">
                     <div class="ui radio checkbox">
-                        <input 
-                        v-model="form.monsterConstraint" 
-                        type="radio" 
-                        name="onlyBosses" 
+                        <input
+                        v-model="form.monsterConstraint"
+                        type="radio"
+                        name="onlyBosses"
                         @change="checkboxChanged('onlyBosses', $event)"
                         value="bossesOnly"
                         >
@@ -19,9 +19,9 @@
                 </div>
                 <div class="field">
                     <div class="ui radio checkbox">
-                        <input 
-                        v-model="form.monsterConstraint" 
-                        type="radio" 
+                        <input
+                        v-model="form.monsterConstraint"
+                        type="radio"
                         name="slayerOnly"
                         value="slayerOnly"
                         @change="checkboxChanged('slayerOnly', $event)"
@@ -30,18 +30,19 @@
                     </div>
                 </div>
             </div>
-            <div class="field">
+            <div class="inline field">
                 <label>Maximum level</label>
-                <input 
-                    v-model="form.maxLvl" 
-                    type="number" 
-                    name="maxLvl" 
-                    placeholder="Maximum lvl"
-                    @blur="checkValueOnBlur('maxLvl', $event)"
+                <input
+                  class="max-width-input"
+                  v-model="form.maxLvl"
+                  type="number"
+                  name="maxLvl"
+                  placeholder="Maximum lvl"
+                  @blur="checkValueOnBlur('maxLvl', $event)"
                 >
             </div>
         </form>
-    </div>    
+    </div>
 </template>
 
 <script>
@@ -51,7 +52,7 @@ export default {
         return {
             form: {
                 monsterConstraint: false,
-                maxLvl: 10000
+                maxLvl: 9999
             }
         }
     },
@@ -61,13 +62,15 @@ export default {
         },
         resetConstraints () {
             this.form.monsterConstraint = false;
-            this.form.maxLvl = 10000;
+            this.form.maxLvl = 9999;
             this.$emit('constraintsChanged', this.form);
         },
         checkValueOnBlur (type, e) {
             const value = e.target.valueAsNumber;
             if (value < 1 || isNaN(value)) {
                 this.form[type] = 1;
+            } else if (value > 9999) {
+              this.form[type] = 9999
             }
             this.$emit('constraintsChanged', this.form);
         }
@@ -80,6 +83,9 @@ export default {
 
 <style scoped lang="scss">
 form {
-    text-align: left;
+  text-align: left;
+}
+.max-width-input {
+  max-width: 80px;
 }
 </style>

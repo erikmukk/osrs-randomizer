@@ -4,7 +4,7 @@
             <h3>Step 2. Get a monster to fight</h3>
         </div>
         <div class="monster-randomizer four wide column">
-            <MonsterItem v-if="oneMonster" :item="oneMonster" />
+            <MonsterItem v-if="oneMonster" :item="oneMonster" :poisonous="isPoisonous" />
             <div>
                 <button class="ui secondary button" @click.prevent=randomize>
                     Randomize
@@ -19,11 +19,11 @@
                         {{loadingText}}
                     </div>
                 </div>
-            </div>  
+            </div>
         </div>
         <div class="monster-randomizer-extras eight wide column">
             <MonsterRandomizerConstraints @constraintsChanged="handleConstraintsChanged"/>
-        </div>    
+        </div>
     </div>
 </template>
 
@@ -47,7 +47,8 @@ export default {
     computed: {
         ...mapGetters({
             oneMonster: 'monster/oneMonster',
-            isLoading: 'monster/isLoading'
+            isLoading: 'monster/isLoading',
+            isPoisonous: 'monster/isPoisonous'
         })
     },
     methods: {

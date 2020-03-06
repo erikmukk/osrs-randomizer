@@ -1,7 +1,8 @@
 const initialState = () => {
     return {
         monster: null,
-        isLoading: false
+        isLoading: false,
+        isPoisonous: false,
     }
 }
 
@@ -14,10 +15,11 @@ export default {
 
     mutations: {
         setLoading (state, isLoading) {
-            state.isLoading = isLoading;
+          state.isLoading = isLoading;
         },
         setItem (state, item) {
-            state.monster = item;
+          state.isPoisonous = item ? item.isPoisonous : false
+          state.monster = item;
         }
     },
 
@@ -34,7 +36,7 @@ export default {
             })
             .catch(err => {
             })
-            .then(() => {
+            .finally(() => {
                 commit('setLoading', false)
             })
         }
@@ -42,7 +44,8 @@ export default {
 
     getters: {
         oneMonster: state => state.monster,
-        isLoading: state => state.isLoading
+        isLoading: state => state.isLoading,
+        isPoisonous: state => state.isPoisonous
     }
 }
 

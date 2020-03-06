@@ -5,7 +5,7 @@
         </div>
         <div class="inventory-randomizer four wide column">
             <div>
-                <Inventory :items="allItems" />  
+                <Inventory :items="allItems" />
                 <button class="ui secondary button" @click.prevent=randomize>
                     Randomize
                 </button>
@@ -19,11 +19,11 @@
                         {{loadingText}}
                     </div>
                 </div>
-            </div>  
+            </div>
         </div>
         <div class="inventory-randomizer-extras eight wide column">
             <InventoryRandomizerConstraints @constraintsChanged="handleConstraintsChanged"/>
-        </div>    
+        </div>
     </div>
 </template>
 
@@ -47,7 +47,8 @@ export default {
     computed: {
         ...mapGetters({
             allItems: 'inventory/allItems',
-            isLoading: 'inventory/isLoading'
+            isLoading: 'inventory/isLoading',
+            monsterIsPoisonous: 'monster/isPoisonous'
         })
     },
     methods: {

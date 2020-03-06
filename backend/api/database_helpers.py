@@ -43,9 +43,21 @@ class OSRSBoxDatabase:
         item_prices = r.json()
         for item in items_api.load():
             price_found = False
+            stripped_name = item.wiki_name or ""
+            if ("100" in stripped_name):
+                stripped_name = stripped_name.strip("(100)").strip()
+            elif ("Undamaged" in stripped_name):
+                stripped_name = stripped_name.strip("(Undamaged)").strip()  
+            elif ("Uncharged" in stripped_name):
+                stripped_name = stripped_name.strip("(Uncharged)").strip() 
+            elif ("Full" in stripped_name):
+                stripped_name = stripped_name.strip("(Full)").strip()
+                stripped_name += " (full)"
+            item.stripped_name = stripped_name        
             try:
                 for item_price in item_prices:
-                    if (item_price["name"] == item.wiki_name):
+                    #if (item_price["name"] == item.wiki_name):
+                    if (item_price["name"] == stripped_name):
                         item.price = item_price['price']
                         price_found = True
                         break
@@ -92,7 +104,8 @@ class OSRSBoxDatabase:
                             'slot': item.equipment.slot,
                             'tradeable': item.tradeable_on_ge,
                             'id': item.id,
-                            'price': item.price
+                            'price': item.price,
+                            'strippedName': item.stripped_name
                         }
                         items.append(item_object)
                     elif item_slot == None:
@@ -103,7 +116,8 @@ class OSRSBoxDatabase:
                             'slot': item.equipment.slot,
                             'tradeable': item.tradeable_on_ge,
                             'id': item.id,
-                            'price': item.price
+                            'price': item.price,
+                            'strippedName': item.stripped_name
                         }
                         items.append(item_object)
         return items 

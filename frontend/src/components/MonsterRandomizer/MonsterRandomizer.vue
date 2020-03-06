@@ -22,7 +22,7 @@
                 </div>
             </div>
         </div>
-        <div class="monster-randomizer-extras eight wide column">
+        <div class="monster-randomizer-extras nine wide column">
             <MonsterRandomizerConstraints @constraintsChanged="handleConstraintsChanged"/>
         </div>
     </div>

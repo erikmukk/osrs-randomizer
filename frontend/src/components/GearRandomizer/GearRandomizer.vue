@@ -32,9 +32,9 @@
             {{loadingText}}
           </div>
         </div>
-      </div>  
+      </div>
     </div>
-    <div class="gear-randomizer-extras eight wide column"> 
+    <div class="gear-randomizer-extras nine wide column">
       <GearRandomizerCombatConstraints @constraintsChanged="handleConstraintsChanged" />
     </div>
   </div>
@@ -117,7 +117,7 @@ export default {
           this.ammo_svg = equipmentItem.base64_icon;
           this.ammo_item = equipmentItem;
           break;
-        case 'body':  
+        case 'body':
            this.body_svg = equipmentItem.base64_icon;
            this.body_item = equipmentItem;
            break;
@@ -154,10 +154,10 @@ export default {
           this.shield_item = equipmentItem;
           break;
         case 'weapon':
-          this.weapon_svg = equipmentItem.base64_icon;  
+          this.weapon_svg = equipmentItem.base64_icon;
           this.weapon_item = equipmentItem;
-        case '2h':  
-          this.weapon_svg = equipmentItem.base64_icon;  
+        case '2h':
+          this.weapon_svg = equipmentItem.base64_icon;
           this.weapon_item = equipmentItem;
           this.shield_svg = '';
           this.shield_item = null;

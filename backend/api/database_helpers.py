@@ -129,11 +129,11 @@ class OSRSBoxDatabase:
             item = sample(self.get_all_in_slot(slot, att_lvl, def_lvl, str_lvl, ranged_lvl, magic_lvl, prayer_lvl, allow_untradeables, max_price), 1)[0]
             # Reroll if needed
 
-            while (not item['tradeable'] and not allow_untradeables):
+            while (not item['tradeable'] and not allow_untradeables or item['price'] > max_price):
                 if (not item['tradeable'] and not allow_untradeables):
                     item = sample(self.get_all_in_slot(slot, att_lvl, def_lvl, str_lvl, ranged_lvl, magic_lvl, prayer_lvl, allow_untradeables, max_price), 1)[0]
-                #if (price > max_price):
-                #    item = sample(self.get_all_in_slot(slot, att_lvl, def_lvl, str_lvl, ranged_lvl, magic_lvl, prayer_lvl, allow_untradeables, max_price), 1)[0]
+                if (item['price'] > max_price):
+                    item = sample(self.get_all_in_slot(slot, att_lvl, def_lvl, str_lvl, ranged_lvl, magic_lvl, prayer_lvl, allow_untradeables, max_price), 1)[0]
             items.append(item)
             # print(item['tradeable'], item['Name'])
         return items  
@@ -142,11 +142,11 @@ class OSRSBoxDatabase:
         #item = random.sample(self.get_all_in_slot(slot, att_lvl, def_lvl, str_lvl, ranged_lvl, magic_lvl, prayer_lvl, allow_untradeables), 1)
         item = sample(self.get_all_in_slot(slot, att_lvl, def_lvl, str_lvl, ranged_lvl, magic_lvl, prayer_lvl, allow_untradeables, max_price), 1)[0]
 
-        while (not item['tradeable'] and not allow_untradeables):
+        while (not item['tradeable'] and not allow_untradeables  or item['price'] > max_price):
             if (not item['tradeable'] and not allow_untradeables):
                 item = sample(self.get_all_in_slot(slot, att_lvl, def_lvl, str_lvl, ranged_lvl, magic_lvl, prayer_lvl, allow_untradeables, max_price), 1)[0]
-            #if (price > max_price):
-            #    item = sample(self.get_all_in_slot(slot, att_lvl, def_lvl, str_lvl, ranged_lvl, magic_lvl, prayer_lvl, allow_untradeables, max_price), 1)[0]
+            if (item['price'] > max_price):
+                item = sample(self.get_all_in_slot(slot, att_lvl, def_lvl, str_lvl, ranged_lvl, magic_lvl, prayer_lvl, allow_untradeables, max_price), 1)[0]
         return item
 
     def get_random_monsters(self, monsters_pool, max_lvl):

@@ -21,7 +21,7 @@
                 </div>
             </div>
         </div>
-        <div class="inventory-randomizer-extras eight wide column">
+        <div class="inventory-randomizer-extras nine wide column">
             <InventoryRandomizerConstraints @constraintsChanged="handleConstraintsChanged"/>
         </div>
     </div>

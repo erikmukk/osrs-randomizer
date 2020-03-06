@@ -9,9 +9,7 @@ import json
 
 class OSRSBoxDatabase:
     def __init__(self):
-        self.all_ge_prices = self.init_ge_prices()
-        self.all_items = items_api.load()
-        # Add prices to all items here!!!
+        self.all_items = self.init_all_items_w_prices()
         # https://api.runelite.net/runelite-1.6.10-SNAPSHOT/item/prices.js try this
         self.all_foods = self.init_foods()  
         self.all_potions = self.init_potions()
@@ -20,6 +18,43 @@ class OSRSBoxDatabase:
         self.all_monsters = self.init_monsters(_all_monsters)
         self.all_bosses = self.init_bosses(_all_monsters)
         self.all_slayer_monsters = self.init_slayer_monsters(_all_monsters)
+
+    def init_all_items_w_prices(self):
+        all_items = []
+        '''URL = "https://rsbuddy.com/exchange/summary.json"
+        r = requests.get(url = URL) 
+        item_prices = r.json()
+        for item in items_api.load():
+            price_found = False
+            try:
+                for key in item_prices:
+                    ge_item = item_prices[key]
+                    if (ge_item["name"] == item.wiki_name):
+                        item.price = ge_item['buy_average']
+                        price_found = True
+                        break
+                if not price_found:
+                    item.price = 0   
+            except:
+                item.price = 0
+            all_items.append(item)'''
+        URL = "https://api.runelite.net/runelite-1.6.10-SNAPSHOT/item/prices.js"
+        r = requests.get(url = URL) 
+        item_prices = r.json()
+        for item in items_api.load():
+            price_found = False
+            try:
+                for item_price in item_prices:
+                    if (item_price["name"] == item.wiki_name):
+                        item.price = item_price['price']
+                        price_found = True
+                        break
+                if not price_found:
+                    item.price = 0   
+            except:
+                item.price = 0
+            all_items.append(item)    
+        return all_items    
 
     def can_pick(self, item, att_lvl, def_lvl, str_lvl, ranged_lvl, magic_lvl, prayer_lvl, allow_untradeables, max_price):
         requirements = item.equipment.requirements
@@ -56,7 +91,8 @@ class OSRSBoxDatabase:
                             'base64_icon': item.icon,
                             'slot': item.equipment.slot,
                             'tradeable': item.tradeable_on_ge,
-                            'id': item.id
+                            'id': item.id,
+                            'price': item.price
                         }
                         items.append(item_object)
                     elif item_slot == None:
@@ -67,6 +103,7 @@ class OSRSBoxDatabase:
                             'slot': item.equipment.slot,
                             'tradeable': item.tradeable_on_ge,
                             'id': item.id,
+                            'price': item.price
                         }
                         items.append(item_object)
         return items 
@@ -91,13 +128,12 @@ class OSRSBoxDatabase:
         for slot in all_gear_slots:
             item = sample(self.get_all_in_slot(slot, att_lvl, def_lvl, str_lvl, ranged_lvl, magic_lvl, prayer_lvl, allow_untradeables, max_price), 1)[0]
             # Reroll if needed
-            price = self.find_item_ge_price(item['Name'])
-            while (not item['tradeable'] and not allow_untradeables and not price <= max_price):
+
+            while (not item['tradeable'] and not allow_untradeables):
                 if (not item['tradeable'] and not allow_untradeables):
                     item = sample(self.get_all_in_slot(slot, att_lvl, def_lvl, str_lvl, ranged_lvl, magic_lvl, prayer_lvl, allow_untradeables, max_price), 1)[0]
-                price = self.find_item_ge_price(item['Name'])
-                if (price > max_price):
-                    item = sample(self.get_all_in_slot(slot, att_lvl, def_lvl, str_lvl, ranged_lvl, magic_lvl, prayer_lvl, allow_untradeables, max_price), 1)[0]
+                #if (price > max_price):
+                #    item = sample(self.get_all_in_slot(slot, att_lvl, def_lvl, str_lvl, ranged_lvl, magic_lvl, prayer_lvl, allow_untradeables, max_price), 1)[0]
             items.append(item)
             # print(item['tradeable'], item['Name'])
         return items  
@@ -106,13 +142,11 @@ class OSRSBoxDatabase:
         #item = random.sample(self.get_all_in_slot(slot, att_lvl, def_lvl, str_lvl, ranged_lvl, magic_lvl, prayer_lvl, allow_untradeables), 1)
         item = sample(self.get_all_in_slot(slot, att_lvl, def_lvl, str_lvl, ranged_lvl, magic_lvl, prayer_lvl, allow_untradeables, max_price), 1)[0]
 
-        price = self.find_item_ge_price(item['Name'])
-        while (not item['tradeable'] and not allow_untradeables and not price <= max_price):
+        while (not item['tradeable'] and not allow_untradeables):
             if (not item['tradeable'] and not allow_untradeables):
                 item = sample(self.get_all_in_slot(slot, att_lvl, def_lvl, str_lvl, ranged_lvl, magic_lvl, prayer_lvl, allow_untradeables, max_price), 1)[0]
-            price = self.find_item_ge_price(item['Name'])
-            if (price > max_price):
-                item = sample(self.get_all_in_slot(slot, att_lvl, def_lvl, str_lvl, ranged_lvl, magic_lvl, prayer_lvl, allow_untradeables, max_price), 1)[0]
+            #if (price > max_price):
+            #    item = sample(self.get_all_in_slot(slot, att_lvl, def_lvl, str_lvl, ranged_lvl, magic_lvl, prayer_lvl, allow_untradeables, max_price), 1)[0]
         return item
 
     def get_random_monsters(self, monsters_pool, max_lvl):
@@ -364,13 +398,3 @@ class OSRSBoxDatabase:
         URL = "https://rsbuddy.com/exchange/summary.json"
         r = requests.get(url = URL) 
         return r.json() 
-
-    def find_item_ge_price(self, item_name):
-        try:
-            for key in self.all_ge_prices:
-                ge_item = self.all_ge_prices[key]
-                if (ge_item["name"] == item_name):
-                    return ge_item['buy_average']
-            return 1        
-        except:
-            return 1

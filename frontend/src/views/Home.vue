@@ -1,6 +1,6 @@
 <template>
   <div class="home ui stackable grid">
-    <div v-if="!isNewVersion">
+    <div v-if="!isNewVersion" class="sixteen wide column">
       <div class="sixteen wide column">
         <GearRandomizer />
       </div>
@@ -13,10 +13,10 @@
     </div>  
     <div v-else class="sixteen wide column">
       <carousel 
-      :perPage=1 
+        :perPage=1 
       >
         <slide>
-  	      <GearRandomizer />
+          <GearRandomizer />
         </slide>
         <slide>
           <MonsterRandomizer />
@@ -54,5 +54,7 @@ export default {
 };
 </script>
 <style scoped>
-
+.VueCarousel {
+  width: inherit
+}
 </style>

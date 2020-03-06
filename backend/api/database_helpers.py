@@ -9,16 +9,19 @@ import json
 
 class OSRSBoxDatabase:
     def __init__(self):
+        self.all_ge_prices = self.init_ge_prices()
         self.all_items = items_api.load()
+        # Add prices to all items here!!!
+        # https://api.runelite.net/runelite-1.6.10-SNAPSHOT/item/prices.js try this
         self.all_foods = self.init_foods()  
         self.all_potions = self.init_potions()
-        _all_monsters = monsters_api.load()
         self.banned_monsters = self.init_banned_monsters()
+        _all_monsters = monsters_api.load()
         self.all_monsters = self.init_monsters(_all_monsters)
         self.all_bosses = self.init_bosses(_all_monsters)
         self.all_slayer_monsters = self.init_slayer_monsters(_all_monsters)
 
-    def can_pick(self, item, att_lvl, def_lvl, str_lvl, ranged_lvl, magic_lvl, prayer_lvl, allow_untradeables):
+    def can_pick(self, item, att_lvl, def_lvl, str_lvl, ranged_lvl, magic_lvl, prayer_lvl, allow_untradeables, max_price):
         requirements = item.equipment.requirements
         if requirements == None:
             return True
@@ -41,11 +44,11 @@ class OSRSBoxDatabase:
             return False
         return True  
 
-    def get_all_in_slot(self, item_slot, att_lvl , def_lvl , str_lvl, ranged_lvl, magic_lvl, prayer_lvl, allow_untradeables):
+    def get_all_in_slot(self, item_slot, att_lvl , def_lvl , str_lvl, ranged_lvl, magic_lvl, prayer_lvl, allow_untradeables, max_price):
         items = []
         for item in self.all_items:
             if item.equipment:
-                if (self.can_pick(item, att_lvl, def_lvl, str_lvl, ranged_lvl, magic_lvl, prayer_lvl, allow_untradeables)):
+                if (self.can_pick(item, att_lvl, def_lvl, str_lvl, ranged_lvl, magic_lvl, prayer_lvl, allow_untradeables, max_price)):
                     if item.equipment.slot == item_slot:
                         item_object = {
                             'Name': item.wiki_name,
@@ -63,14 +66,10 @@ class OSRSBoxDatabase:
                             'base64_icon': item.icon,
                             'slot': item.equipment.slot,
                             'tradeable': item.tradeable_on_ge,
-                            'id': item.id
+                            'id': item.id,
                         }
                         items.append(item_object)
-        return items
-
-    def check_item_price(self, item_id, max_price):
-
-        return "a"    
+        return items 
 
     def get_full_gear(self, att_lvl = 99, def_lvl = 99, str_lvl = 99, ranged_lvl = 99, magic_lvl = 99, prayer_lvl = 99, allow_untradeables=True, max_price = 10000):
         all_gear_slots = [
@@ -90,30 +89,48 @@ class OSRSBoxDatabase:
             all_gear_slots = all_gear_slots + ['2h']  
         items = []
         for slot in all_gear_slots:
-            item = sample(self.get_all_in_slot(slot, att_lvl, def_lvl, str_lvl, ranged_lvl, magic_lvl, prayer_lvl, allow_untradeables), 1)[0]
+            item = sample(self.get_all_in_slot(slot, att_lvl, def_lvl, str_lvl, ranged_lvl, magic_lvl, prayer_lvl, allow_untradeables, max_price), 1)[0]
             # Reroll if needed
-            while (not item['tradeable'] and not allow_untradeables):
+            price = self.find_item_ge_price(item['Name'])
+            while (not item['tradeable'] and not allow_untradeables and not price <= max_price):
                 if (not item['tradeable'] and not allow_untradeables):
-                    item = sample(self.get_all_in_slot(slot, att_lvl, def_lvl, str_lvl, ranged_lvl, magic_lvl, prayer_lvl, allow_untradeables), 1)[0]
+                    item = sample(self.get_all_in_slot(slot, att_lvl, def_lvl, str_lvl, ranged_lvl, magic_lvl, prayer_lvl, allow_untradeables, max_price), 1)[0]
+                price = self.find_item_ge_price(item['Name'])
+                if (price > max_price):
+                    item = sample(self.get_all_in_slot(slot, att_lvl, def_lvl, str_lvl, ranged_lvl, magic_lvl, prayer_lvl, allow_untradeables, max_price), 1)[0]
             items.append(item)
             # print(item['tradeable'], item['Name'])
         return items  
 
     def get_one_in_slot(self, slot = None, att_lvl = 99, def_lvl = 99, str_lvl = 99, ranged_lvl = 99, magic_lvl = 99, prayer_lvl = 99, allow_untradeables = True, max_price = 100000):
-        item = random.sample(self.get_all_in_slot(slot, att_lvl, def_lvl, str_lvl, ranged_lvl, magic_lvl, prayer_lvl, allow_untradeables), 1)
+        #item = random.sample(self.get_all_in_slot(slot, att_lvl, def_lvl, str_lvl, ranged_lvl, magic_lvl, prayer_lvl, allow_untradeables), 1)
+        item = sample(self.get_all_in_slot(slot, att_lvl, def_lvl, str_lvl, ranged_lvl, magic_lvl, prayer_lvl, allow_untradeables, max_price), 1)[0]
+
+        price = self.find_item_ge_price(item['Name'])
+        while (not item['tradeable'] and not allow_untradeables and not price <= max_price):
+            if (not item['tradeable'] and not allow_untradeables):
+                item = sample(self.get_all_in_slot(slot, att_lvl, def_lvl, str_lvl, ranged_lvl, magic_lvl, prayer_lvl, allow_untradeables, max_price), 1)[0]
+            price = self.find_item_ge_price(item['Name'])
+            if (price > max_price):
+                item = sample(self.get_all_in_slot(slot, att_lvl, def_lvl, str_lvl, ranged_lvl, magic_lvl, prayer_lvl, allow_untradeables, max_price), 1)[0]
         return item
 
     def get_random_monsters(self, monsters_pool, max_lvl):
         monsters = []
+        regex = re.compile(r'[Dd]ragon')
         for monster in monsters_pool:
             if (monster.combat_level <= max_lvl):
+                isDragonfire = False
+                if (regex.search(monster.name)):
+                    isDragonfire = True
                 _monster = {
                     'Name': monster.name,
                     'wiki_url': monster.wiki_url,
                     'isSlayer': monster.slayer_monster,
-                    'isPoisonous': monster.poisonous
+                    'isPoisonous': monster.poisonous,
+                    'isDragonfire': isDragonfire
                 }
-                monsters.append(_monster)
+                monsters.append(_monster)   
         return monsters   
 
     def get_one_monster(self, bosses_only, slayer_only, max_lvl):
@@ -326,17 +343,34 @@ class OSRSBoxDatabase:
 
     def init_bosses(self, all_monsters):
         all_bosses = []
+        added_names = []
         for monster in all_monsters:
-            if ("boss" in monster.category):
-                all_bosses.append(monster)                    
+            cat = monster.category
+            if ("boss" in cat and monster.name not in added_names):
+                all_bosses.append(monster)  
+                added_names.append(monster.name) 
         return all_bosses;     
 
     def init_slayer_monsters(self, all_monsters):
         all_slayer = []
+        added_names = []
         for monster in all_monsters:
-            if (monster.slayer_monster):
-                all_slayer.append(monster)                    
+            if (monster.slayer_monster and monster.name not in added_names):
+                all_slayer.append(monster)  
+                added_names.append(monster.name)                  
         return all_slayer;  
 
+    def init_ge_prices(self):
+        URL = "https://rsbuddy.com/exchange/summary.json"
+        r = requests.get(url = URL) 
+        return r.json() 
 
-
+    def find_item_ge_price(self, item_name):
+        try:
+            for key in self.all_ge_prices:
+                ge_item = self.all_ge_prices[key]
+                if (ge_item["name"] == item_name):
+                    return ge_item['buy_average']
+            return 1        
+        except:
+            return 1

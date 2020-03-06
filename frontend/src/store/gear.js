@@ -20,6 +20,7 @@ export default {
             state.items = items;
         },
         replaceOneItem (state, newItem) {
+            console.log(newItem)
             state.items = state.items.map(item => {
                 if (item.slot === newItem.slot) {
                     return newItem
@@ -53,7 +54,7 @@ export default {
                 return resp.json();
             })
             .then(resp => {
-                commit('replaceOneItem', resp[0])
+                commit('replaceOneItem', resp)
             })
             .catch(err => {
             })

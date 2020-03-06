@@ -4,7 +4,8 @@
             <h3>Step 2. Get a monster to fight</h3>
         </div>
         <div class="monster-randomizer four wide column">
-            <MonsterItem v-if="oneMonster" :item="oneMonster" :poisonous="isPoisonous" />
+            <MonsterItem v-if="oneMonster" :item="oneMonster" :poisonous="isPoisonous" :dragonfire="isDragonfire" />
+            <div v-else class="monster-placeholder"></div>
             <div>
                 <button class="ui secondary button" @click.prevent=randomize>
                     Randomize
@@ -48,7 +49,8 @@ export default {
         ...mapGetters({
             oneMonster: 'monster/oneMonster',
             isLoading: 'monster/isLoading',
-            isPoisonous: 'monster/isPoisonous'
+            isPoisonous: 'monster/isPoisonous',
+            isDragonfire: 'monster/isDragonfire'
         })
     },
     methods: {
@@ -82,5 +84,8 @@ export default {
 .ui.loader {
   min-width: 400px;
   max-width: 100%;
+}
+.monster-placeholder {
+    min-height: 120px
 }
 </style>

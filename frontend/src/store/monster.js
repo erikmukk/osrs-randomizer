@@ -3,6 +3,7 @@ const initialState = () => {
         monster: null,
         isLoading: false,
         isPoisonous: false,
+        isDragonfire: false
     }
 }
 
@@ -18,7 +19,8 @@ export default {
           state.isLoading = isLoading;
         },
         setItem (state, item) {
-          state.isPoisonous = item ? item.isPoisonous : false
+          state.isDragonfire = item ? item.isDragonfire : false;
+          state.isPoisonous = item ? item.isPoisonous : false;
           state.monster = item;
         }
     },
@@ -45,7 +47,8 @@ export default {
     getters: {
         oneMonster: state => state.monster,
         isLoading: state => state.isLoading,
-        isPoisonous: state => state.isPoisonous
+				isPoisonous: state => state.isPoisonous,
+				isDragonfire: state => state.isDragonfire
     }
 }
 

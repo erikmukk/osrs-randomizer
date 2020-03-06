@@ -154,9 +154,13 @@ export default {
           this.shield_item = equipmentItem;
           break;
         case 'weapon':
+          this.weapon_svg = equipmentItem.base64_icon;  
+          this.weapon_item = equipmentItem;
         case '2h':  
           this.weapon_svg = equipmentItem.base64_icon;  
           this.weapon_item = equipmentItem;
+          this.shield_svg = '';
+          this.shield_item = null;
           break;
       }
     },
@@ -169,6 +173,9 @@ export default {
       this.$store.dispatch('gear/getFullEquipment', this.gearConstraints)
     }
   },
+  mounted () {
+    this.setItems();
+  }
 };
 </script>
 

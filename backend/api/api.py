@@ -67,7 +67,6 @@ def random_monsters():
     elif (request.args.get('monsterConstraint')  == 'slayerOnly'):
         slayer_only = True
     monster = database.get_one_monster(bosses_only=bosses_only, slayer_only=slayer_only, max_lvl=max_lvl)
-    
     return jsonify(monster)
 
 @api.route("/full_inventory", methods = ["GET"])

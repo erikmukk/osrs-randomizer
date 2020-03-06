@@ -93,9 +93,8 @@
                         <label>Allow untradeables?</label>
                     </div>
                 </div>
-                <div class="field disabled">
+                <div class="field">
                     <label>Max slot price (10 000+)</label>
-                    <label>Temporarily disabled</label>
                     <input
                     v-model="form.maxPrice"
                     type="number"

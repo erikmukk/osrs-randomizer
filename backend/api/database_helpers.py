@@ -12,9 +12,11 @@ class OSRSBoxDatabase:
         self.all_items = items_api.load()
         self.all_foods = self.init_foods()  
         self.all_potions = self.init_potions()
+        _all_monsters = monsters_api.load()
         self.banned_monsters = self.init_banned_monsters()
-        self.all_monsters = self.init_monsters(monsters_api.load())
-        self.all_bosses = self.init_bosses(monsters_api.load())
+        self.all_monsters = self.init_monsters(_all_monsters)
+        self.all_bosses = self.init_bosses(_all_monsters)
+        self.all_slayer_monsters = self.init_slayer_monsters(_all_monsters)
 
     def can_pick(self, item, att_lvl, def_lvl, str_lvl, ranged_lvl, magic_lvl, allow_untradeables):
         requirements = item.equipment.requirements
@@ -22,9 +24,6 @@ class OSRSBoxDatabase:
             return True
         is_suitbale_array = []    
         for key in requirements:
-            ''''if not allow_untradeables:
-                print(item.tradeable_on_ge)
-                is_suitbale_array.append(item.tradeable_on_ge)'''
             if 'attack' == key:
                 is_suitbale_array.append(att_lvl >= requirements['attack'])
             if 'defence' == key:  
@@ -102,27 +101,26 @@ class OSRSBoxDatabase:
         item = random.sample(self.get_all_in_slot(slot, att_lvl, def_lvl, str_lvl, ranged_lvl, magic_lvl, allow_untradeables), 1)
         return item
 
-    def get_random_monsters(self, bosses_only):
+    def get_random_monsters(self, monsters_pool, max_lvl):
         monsters = []
-        if not bosses_only:
-            for monster in self.all_monsters:
+        for monster in monsters_pool:
+            if (monster.combat_level <= max_lvl):
                 _monster = {
                     'Name': monster.name,
-                    'wiki_url': monster.wiki_url
+                    'wiki_url': monster.wiki_url,
+                    'isSlayer': monster.slayer_monster
                 }
                 monsters.append(_monster)
-        else:
-            for monster in self.all_bosses: 
-                _monster = {
-                    'Name': monster.name,
-                    'wiki_url': monster.wiki_url
-                }
-                monsters.append(_monster)       
         return monsters   
 
-    def get_one_monster(self, bosses_only=False):
-        monster = sample(self.get_random_monsters(bosses_only), 1)[0]
-        
+    def get_one_monster(self, bosses_only, slayer_only, max_lvl):
+        monster = None
+        if (bosses_only):
+            monster = sample(self.get_random_monsters(self.all_bosses, max_lvl), 1)[0]
+        elif (slayer_only):
+            monster = sample(self.get_random_monsters(self.all_slayer_monsters, max_lvl), 1)[0]
+        else:
+            monster = sample(self.get_random_monsters(self.all_monsters, max_lvl), 1)[0]
         monster_wiki_url = monster['wiki_url']
         page = requests.get(monster_wiki_url)
         soup = BeautifulSoup(page.content, "lxml")
@@ -321,64 +319,18 @@ class OSRSBoxDatabase:
         return new_monsters   
 
     def init_bosses(self, all_monsters):
-        bosses_list = [
-            'Zulrah',
-            'Vorkath',
-            'Corporeal Beast',
-            'The Nightmare',
-            'Rabbot (Prifddinas)',
-            'Sarachnis',
-            'Giant Mole',
-            'Kalphite Queen',
-            'Dagannoth Supreme',
-            'Dagannoth Rex',
-            'Dagannoth Prime',
-            'Commander Zilyana',
-            "K'ril Tsutsaroth",
-            'General Graardor',
-            "Kree'arra",
-            'Chaos Elemental',
-            "King Black Dragon",
-            "Callisto",
-            "Vet'ion",
-            "Venenatis",
-            "Scorpia",
-            "Chaos Fanatic",
-            "Crazy archaeologist",
-            "Skotizo",
-            "Obor",
-            "Bryophyta",
-            "Hespori",
-            "The Mimic",
-            "Wintertodt",
-            "Zalcano",
-            "Dusk",
-            "Dawn",
-            "Grotesque Guardians",
-            "Abyssal Sire",
-            "Kraken",
-            "Cerberus",
-            "Thermonuclear smoke devil",
-            "Alchemical Hydra"
-        ]
         all_bosses = []
-        
-        for i, monster in enumerate(all_monsters):
-            for elem in bosses_list:
-                new_regex = re.compile(f".*{elem}.*|.*{elem.lower}.*")     
-                if (new_regex.search(monster.wiki_name) 
-                and "Hellhound" not in monster.wiki_name 
-                and "Scorpia's" not in monster.wiki_name
-                and "Spawn" not in monster.wiki_name):
-                    if len(all_bosses) == 0:
-                        all_bosses.append(monster)
-                        break
-                    else:
-                        new_regex_2 = re.compile(f".*{monster.wiki_name.split(' ')[0]}.*|.*{monster.wiki_name.split(' ')[0].lower()}.*")
-                        if not any(new_regex_2.match(element.wiki_name) for element in all_bosses):    
-                            all_bosses.append(monster)
-                            break
+        for monster in all_monsters:
+            if ("boss" in monster.category):
+                all_bosses.append(monster)                    
         return all_bosses;     
+
+    def init_slayer_monsters(self, all_monsters):
+        all_slayer = []
+        for monster in all_monsters:
+            if (monster.slayer_monster):
+                all_slayer.append(monster)                    
+        return all_slayer;  
 
 
 

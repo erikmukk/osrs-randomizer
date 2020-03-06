@@ -1,14 +1,44 @@
 <template>
     <div class="combat-stats ui stackable centered grid">
         <form class="ui form">
-            <div class="ui checkbox">
+            <button class="ui secondary button" @click.prevent="resetConstraints">
+                Reset constraints
+            </button>
+            <div class="grouped fields">
+                <div class="field">
+                    <div class="ui radio checkbox">
+                        <input 
+                        v-model="form.monsterConstraint" 
+                        type="radio" 
+                        name="onlyBosses" 
+                        @change="checkboxChanged('onlyBosses', $event)"
+                        value="bossesOnly"
+                        >
+                        <label>Bosses only?</label>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui radio checkbox">
+                        <input 
+                        v-model="form.monsterConstraint" 
+                        type="radio" 
+                        name="slayerOnly"
+                        value="slayerOnly"
+                        @change="checkboxChanged('slayerOnly', $event)"
+                        >
+                        <label>Slayer monsters only?</label>
+                    </div>
+                </div>
+            </div>
+            <div class="field">
+                <label>Maximum level</label>
                 <input 
-                v-model="form.onlyBosses" 
-                type="checkbox" 
-                name="onlyBosses" 
-                @change="checkboxChanged('onlyBosses', $event)"
+                    v-model="form.maxLvl" 
+                    type="number" 
+                    name="maxLvl" 
+                    placeholder="Maximum lvl"
+                    @blur="checkValueOnBlur('maxLvl', $event)"
                 >
-                <label>Bosses only?</label>
             </div>
         </form>
     </div>    
@@ -20,21 +50,36 @@ export default {
     data () {
         return {
             form: {
-                onlyBosses: false
+                monsterConstraint: false,
+                maxLvl: 10000
             }
         }
     },
     methods: {
         checkboxChanged (name, event) {
-            this.$emit('constraintsChanged', this.form)
+            this.$emit('constraintsChanged', this.form);
+        },
+        resetConstraints () {
+            this.form.monsterConstraint = false;
+            this.form.maxLvl = 10000;
+            this.$emit('constraintsChanged', this.form);
+        },
+        checkValueOnBlur (type, e) {
+            const value = e.target.valueAsNumber;
+            if (value < 1 || isNaN(value)) {
+                this.form[type] = 1;
+            }
+            this.$emit('constraintsChanged', this.form);
         }
     },
     mounted () {
-        this.$emit('constraintsChanged', this.form)
+        this.$emit('constraintsChanged', this.form);
     }
 }
 </script>
 
 <style scoped lang="scss">
-
+form {
+    text-align: left;
+}
 </style>

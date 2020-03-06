@@ -2,25 +2,25 @@
     <div class="combat-stats ui stackable centered grid">
         <form class="ui form">
             <div class="field">
-                    <label>Number of potions (0-{{remainingPots}})</label>
-                    <input 
-                    v-model="form.nrOfPots" 
-                    type="number" 
-                    name="nrOfPots" 
-                    placeholder="# potions"
-                    @blur="checkValueOnBlur('nrOfPots', $event)"
-                    >
-                </div>
-                <div class="field">
-                    <label>Number of food items (0-{{remainingFood}})</label>
-                    <input 
-                    v-model="form.nrOfFood" 
-                    type="number" 
-                    name="nrOfFood" 
-                    placeholder="# food"
-                    @blur="checkValueOnBlur('nrOfFood', $event)"
-                    >
-                </div>
+                <label>Number of potions (0-{{remainingPots}})</label>
+                <input 
+                v-model="form.nrOfPots" 
+                type="number" 
+                name="nrOfPots" 
+                placeholder="# potions"
+                @blur="checkValueOnBlur('nrOfPots', $event)"
+                >
+            </div>
+            <div class="field">
+                <label>Number of food items (0-{{remainingFood}})</label>
+                <input 
+                v-model="form.nrOfFood" 
+                type="number" 
+                name="nrOfFood" 
+                placeholder="# food"
+                @blur="checkValueOnBlur('nrOfFood', $event)"
+                >
+            </div>
         </form>
     </div>    
     

@@ -58,9 +58,13 @@ def full_gear():
 @api.route("/one_monster", methods = ["GET"])
 def random_monsters():
     bosses_only = False
-    if (request.args.get('onlyBosses')  == 'true'):
+    slayer_only = False
+    max_lvl = int(request.args.get('maxLvl'))
+    if (request.args.get('monsterConstraint')  == 'bossesOnly'):
         bosses_only = True
-    monster = database.get_one_monster(bosses_only=bosses_only)
+    elif (request.args.get('monsterConstraint')  == 'slayerOnly'):
+        slayer_only = True
+    monster = database.get_one_monster(bosses_only=bosses_only, slayer_only=slayer_only, max_lvl=max_lvl)
     
     return jsonify(monster)
 
